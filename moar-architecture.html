@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node {
+  font: 10px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var diameter = 800;
+
+var tree = d3.layout.tree()
+    .size([360, diameter / 2 - 120])
+    .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; });
+
+var diagonal = d3.svg.diagonal.radial()
+    .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", diameter)
+    .attr("height", diameter)
+  .append("g")
+    .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+
+var root = {
+  "name": "",
+  "children": [
+    {
+      "name": "6model",
+      "children": [
+        { "name": "6model", size: 1 },
+        { "name": "bootstrap", size: 1 },
+        { "name": "reprconv", size: 1 },
+        { "name": "sc", size: 1 },
+        { "name": "serialization", size: 1 }
+      ]
+    },
+    {
+      "name": "6model/reprs",
+      "children": [
+        { "name": "HashAttrStore", size: 1 },
+        { "name": "KnowHOWAttributeREPR", size: 1 },
+        { "name": "KnowHOWREPR", size: 1 },
+        { "name": "Lexotic", size: 1 },
+        { "name": "MVMArray", size: 1 },
+        { "name": "MVMCallCapture", size: 1 },
+        { "name": "MVMCFunction", size: 1 },
+        { "name": "MVMCode", size: 1 },
+        { "name": "MVMContext", size: 1 },
+        { "name": "MVMHash", size: 1 },
+        { "name": "MVMIter", size: 1 },
+        { "name": "MVMOSHandle", size: 1 },
+        { "name": "MVMString", size: 1 },
+        { "name": "MVMThread", size: 1 },
+        { "name": "NFA", size: 1 },
+        { "name": "P6bigint", size: 1 },
+        { "name": "P6int", size: 1 },
+        { "name": "P6num", size: 1 },
+        { "name": "P6opaque", size: 1 },
+        { "name": "P6str", size: 1 },
+        { "name": "SCRef", size: 1 },
+        { "name": "Uninstantiable", size: 1 }
+      ]
+    },
+    {
+      "name": "core",
+      "children": [
+        { "name": "args", size: 1 },
+        { "name": "bytecode", size: 1 },
+        { "name": "bytecodedump", size: 1 },
+        { "name": "coerce", size: 1 },
+        { "name": "compunit", size: 1 },
+        { "name": "exceptions", size: 1 },
+        { "name": "frame", size: 1 },
+        { "name": "hll", size: 1 },
+        { "name": "instance", size: 1 },
+        { "name": "interp", size: 1 },
+        { "name": "loadbytecode", size: 1 },
+        { "name": "ops", size: 1 },
+        { "name": "threads", size: 1 },
+        { "name": "threadcontext", size: 1 },
+        { "name": "validation", size: 1 }
+      ]
+    },
+    {
+      "name": "gc",
+      "children": [
+        { "name": "allocation", size: 1 },
+        { "name": "collect", size: 1 },
+        { "name": "gen2", size: 1 },
+        { "name": "orchestrate", size: 1 },
+        { "name": "roots", size: 1 },
+        { "name": "wb", size: 1 },
+        { "name": "worklist", size: 1 }
+      ]
+    },
+    {
+      "name": "io",
+      "children": [
+        { "name": "dirops", size: 1 },
+        { "name": "fileops", size: 1 },
+        { "name": "procops", size: 1 },
+        { "name": "socketops", size: 1 }
+      ]
+    },
+    {
+      "name": "moarvm",
+      "children": [
+        { "name": "moarvm", size: 1 }
+      ]
+    },
+    {
+      "name": "strings",
+      "children": [
+        { "name": "latin1", size: 1 },
+        { "name": "ops", size: 1 },
+        { "name": "unicode", size: 1 },
+        { "name": "utf16", size: 1 },
+        { "name": "utf8", size: 1 }
+      ]
+    }
+ ]
+};
+
+var nodes = tree.nodes(root),
+    links = tree.links(nodes);
+
+var link = svg.selectAll(".link")
+    .data(links)
+  .enter().append("path")
+    .attr("class", "link")
+    .attr("d", diagonal);
+
+var node = svg.selectAll(".node")
+    .data(nodes)
+  .enter().append("g")
+    .attr("class", "node")
+    .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
+
+node.append("circle")
+    .attr("r", 4.5);
+
+node.append("text")
+    .attr("dy", ".31em")
+    .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+    .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
+    .text(function(d) { return d.name; });
+
+d3.select(self.frameElement).style("height", diameter - 150 + "px");
+
+</script>
